@@ -1,32 +1,37 @@
+/*
+autor : Diego Bustamante Núñez
+rut : 20.067.251-8
+seccion : A-1
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #define MAX_LIN 1000
-
-void imprimirMatriz(float **Matriz);
+#include <time.h>
+void imprimirMatriz(double **Matriz);
 //m y n nos daran el tamaño que posee nuestra matriz que viene en el archivo ,esta matriz viene con el tamaño incluido en la posicion 0.0
 int m = 0 , n = 0;
 int tamano;
-float **leermatriz(){
+double **leermatriz(){
    //fp es un dato tipo FILE y usando fopen para abrir el archivo de entrada .txt en modo lectura 
-   FILE* fp1=fopen("matriz-6071.in","r");
+   FILE* fp1=fopen("matriz10.in","r");
    fscanf(fp1, "%i",&tamano);
    fclose(fp1);
-   FILE* fp=fopen("matriz-6071.in","r");
+   FILE* fp=fopen("matriz10.in","r");
    // linea[MAX_LIN] es un arreglo estatico de tamaño 1000 (MAX_LINE = 1000) donde en el se almacenar cada una de las lineas en el archivo de entrada .txt
    // *p es un puntero que utilizando la funcion strtok va a separar los datos según la separacion que deseamos dar.
    char linea[MAX_LIN], *p;
    // val es la variable que almacenara cada dato de la linea en dato entero para posteriormente guardarla en la matriz
    int val;
    // aqui reservamos memoria para la matriz con la funcion calloc
-   float **matriz= (float **) calloc(1000, sizeof(float*)) ;
+   double **matriz= (double **) calloc(1000, sizeof(double*)) ;
    //inicializamos m con valor -1
    m=-1;
    while (fgets(linea, MAX_LIN, fp)!=NULL) {
      m=m+1;
      //aqui reservamos memoria para cada uno de los espacios de la matriz
      printf("La linea es : %s\n", linea);
-     matriz[m] = (float *) calloc(MAX_LIN, sizeof(float));
+     matriz[m] = (double *) calloc(MAX_LIN, sizeof(double));
      p = strtok(linea," ");
      n=-1;
      while(p != NULL) {
@@ -43,58 +48,114 @@ float **leermatriz(){
    return matriz;
    fclose(fp);
 }
-float **matriz;
-void imprimirMatriz(float **Matriz){
+//puntero double de dos dimensiones para almacenar las filas y columnas del archivo de entrada.
+double **matriz;
+/*
+void imprimir(matriz)
+entradas: matriz 
+salidas: nada
+funcion que imprime por pantalla la matriz que ingresa.
+*/
+void imprimirMatriz(double **Matriz){
+	//iniciamos un for hasta el tamaño de la matriz para las columnas
 	for (int i = 0; i < tamano; ++i)
 	{
+		//iniciamos un for hasta el tamaño de la matriz para las filas
 		for (int j = 0; j < tamano; ++j)
 		{
-			printf("%f.",Matriz[i][j]);
+			//funcion printf para imprimir por pantalla el tipo de dato que queremos , en este caso el %f nos permite imprimir un double.
+			printf(" %f ",Matriz[i][j]);
 		}
-		printf("\n");
+		//salto de linea
+		printf(" \n ");
 	}
 }
-void RestarALaFila(int f1,int f2,float m){
+/*
+void RestarALaFila(fila 1 , fila 2 , m)
+entradas:
+numero de la fila 1
+numero de la fila 2 
+m = numero con el cual se anula el termino siguiente para triangular la diagonal hacia abajo con ceros
+salida : nada.
+funcion que resta la fila 1 con la fila 2 , modificando la fila 2 para que esta se haga 0.
+*/
+void RestarALaFila(int f1,int f2,double m){
+	//iniciamos un for hasta el tamano.
 	for (int i = 0; i < tamano; ++i)
 	{
-		matriz[f2][i] = matriz[f2][i] + (matriz[f1][i] * m) ;
+		//sumamos el numero de la fila 2 con el numero de la fila 1 por M.
+		if(m == 0){
+			matriz[f2][i] = matriz[f2][i];
+		}else{
+			matriz[f2][i] = matriz[f2][i] + (matriz[f1][i] * m) ;
+		}
+		
 	}
 }
+/*
+void HacerCerosColum(numero de columna)
+entradas:
+Ncol = es el numero de la columa a la que se quiere hacer cero.
+salidas:nada
+*/
 void HacerCerosColum(int Ncol){
 	int i = Ncol + 1;
-	float n;
+	double n;
 	while(i < tamano){
+		//printf("pos1 %i,%i\n",i,Ncol);
+		//printf("pos2 %i,%i\n",Ncol,Ncol);
+		printf("n1 es %f,n2 es %f \n",matriz[i][Ncol],matriz[Ncol][Ncol]);
 		n = -(matriz[i][Ncol] / matriz[Ncol][Ncol]);
+		if(matriz[Ncol][Ncol] == 0){
+			n = 0;
+		}
 		printf("n es %f\n",n);
+		//printf("\n\n\n\n\n\n\n\n\n");
 		RestarALaFila(Ncol,i,n);
 		i++;
 	}
 }
+/*
+triangularla()
+funcion que triangula la matriz tomando la diagonal central como punto de referencia para que todo lo que estaba bajo la diagonal central se haga cero
+llamando a la funcion HacerCerosColum() indicandole el numero de la columna.
+entradas: nada
+salidas: nada
+*/
 void Triangularla(){
+	//variable entera i para iterar
 	int i;
+	//iniciamos un for desde i=0 hasta el tamano del arreglo.
 	for (int i = 0; i < tamano; ++i)
 	{
+		//llamamos a la funcion HacerCerosColum() con i como parametro de entrada para ir haciendo 0 las columnas respectivas
 		HacerCerosColum(i);
 	}
 }
+/*
+multiplicacion()
+funcion que realiza la multiplicacion de todos los numeros de la diagonal central una vez hecho la triangulacion de esta para obtener el determinante de la matriz
+entrada:nada
+salida:nada
+*/
 void multiplicacion(){
-	float resultado = 1;
+	double resultado = 1;
 	for (int i = 0; i < tamano; ++i)
 	{
 		resultado = resultado * matriz[i][i];
 	}
-	printf("el resultado es :%f\n",resultado);
+	printf("el determinante es : %f \n",resultado);
 }
 int main()
 {
-	float **Imatriz;
+	double **Imatriz;
 	printf("aqui es la imatriz XD\n");
 	Imatriz = leermatriz();
 	imprimirMatriz(Imatriz);
-	matriz = (float **)malloc(sizeof(float *)*tamano);
+	matriz = (double **)malloc(sizeof(double *)*tamano);
 	for (int i = 0; i < tamano; ++i)
 	{
-		matriz[i] = (float *)malloc(sizeof(float )*tamano);
+		matriz[i] = (double *)malloc(sizeof(double )*tamano);
 	}
 	printf("tamano es :%i\n",tamano);
 	int i,j;
