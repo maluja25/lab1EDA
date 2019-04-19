@@ -1,9 +1,3 @@
-/*
-autor : Diego Bustamante Núñez
-rut : 20.067.251-8
-seccion : A-1
-*/
-/*incluimos las librerias a ocupar*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +5,6 @@ seccion : A-1
 #include <unistd.h>
 //definimos una constante para el arreglo dinamico
 #define MAX_LIN 1000
-
-
-
 void imprimirMatriz(double **Matriz);
 //m y n nos daran el tamaño que posee nuestra matriz que viene en el archivo ,esta matriz viene con el tamaño incluido en la posicion 0.0
 int m = 0 , n = 0;
@@ -162,39 +153,4 @@ void multiplicacion(){
 		resultado = resultado * matriz[i][i];
 	}
 	printf("el determinante es : %f \n",resultado);
-}
-int main()
-{
-	clock_t tiempo_inicio, tiempo_final,comienzo,final;
-	double segundos;
-	double **Imatriz;
-	Imatriz = leermatriz();
-	//imprimirMatriz(Imatriz);
-	matriz = (double **)malloc(sizeof(double *)*tamano);
-	for (int i = 0; i < tamano; ++i)
-	{
-		matriz[i] = (double *)malloc(sizeof(double )*tamano);
-	}
-	printf("tamano es :%i\n",tamano);
-	int i,j;
-	for (int i = 1; i < tamano + 1 ; ++i)
-	{
-		for (int j = 0; j < tamano ; ++j)
-		{
-			matriz[i-1][j] = Imatriz[i][j];
-		}
-	}
-	comienzo = clock();
-	TriangularMatriz();
-	final = clock();
-	//printf("el tiempo de triangularMatriz es : %f\n",1000.00*(final-comienzo)/CLOCKS_PER_SEC );
-	comienzo = clock();
-	//imprimirMatriz(matriz);
-	final = clock();
-	//printf("el tiempo de imprimir es : %f\n",1000.00*(final-comienzo)/CLOCKS_PER_SEC );
-	comienzo = clock();
-	multiplicacion();
-	final = clock();
-	//printf("el tiempo de multiplicacion es : %f\n",1000.00*(final-comienzo)/CLOCKS_PER_SEC );
-	return 0;
 }
